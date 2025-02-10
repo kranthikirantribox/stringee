@@ -148,6 +148,7 @@ public class radiantxPlugin extends Plugin {
     public void answerCall(PluginCall call) {
         if (currentCall == null) {
             call.reject("No incoming call to answer.");
+
             return;
         }
 
@@ -231,6 +232,7 @@ public class radiantxPlugin extends Plugin {
             @Override
             public void onConnectionConnected(StringeeClient client, boolean isReconnecting) {
                 Log.d("Stringee", "Connected to server");
+                showToast("Connected to server");
             }
             @Override
             public void onConnectionDisconnected(StringeeClient client, boolean isReconnecting) {}
@@ -244,6 +246,7 @@ public class radiantxPlugin extends Plugin {
                 }
                 currentCall = call;
                 radiantxPlugin.storeCall(call);
+                showToast("Incoming call received");
             }
 
             @Override
@@ -254,6 +257,7 @@ public class radiantxPlugin extends Plugin {
             @Override
             public void onConnectionError(StringeeClient client, StringeeError error) {
                 Log.d("Stringee", "Connection error: " + error.getMessage());
+                showToast("Connection error: " + error.getMessage());
             }
 
             @Override
@@ -362,5 +366,12 @@ public class radiantxPlugin extends Plugin {
         JSObject ret = new JSObject();
         ret.put("message", message);
         call.resolve(ret);
+        showToast(message);
+    }
+
+    private void showToast(String message) {
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show()
+        );
     }
 }
